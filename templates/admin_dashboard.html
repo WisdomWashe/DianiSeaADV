@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Diani Sea Adventures{% endblock %}
+
+{% block content %}
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="container">
+      <span>Signed in as admin</span>
+      <a href="{{ url_for('admin_logout') }}">Log out</a>
+    </div>
+  </div>
+
+  <div class="container admin-subnav">
+    <a href="{{ url_for('admin_dashboard') }}" class="active">Dashboard</a>
+    <a href="{{ url_for('admin_safaris') }}">Manage safaris</a>
+  </div>
+
+  <div class="container admin-section">
+    <h2>Safari galleries</h2>
+    <p class="admin-hint">To edit safari text, pricing, or the itinerary, or to add a new safari, go to <a href="{{ url_for('admin_safaris') }}">Manage safaris</a>.</p>
+    <div class="gallery-manager">
+      {% for s in safaris %}
+        <div class="gallery-card">
+          <div class="gallery-card-head">
+            <h3>{{ s.name }}</h3>
+            <form class="upload-form" method="POST" action="{{ url_for('admin_upload', slug=s.slug) }}" enctype="multipart/form-data">
+              <input type="file" name="photos" accept="image/png, image/jpeg, image/webp, image/gif" multiple required>
+              <button type="submit" class="btn btn-outline-dark btn-small">Upload photos</button>
+            </form>
+          </div>
+
+          {% if s.images %}
+            <div class="thumb-grid">
+              {% for img in s.images %}
+                <div class="thumb">
+                  <img src="{{ url_for('static', filename='uploads/' ~ s.slug ~ '/' ~ img.filename) }}" alt="">
+                  <form method="POST" action="{{ url_for('admin_delete_image', image_id=img.id) }}" onsubmit="return confirm('Delete this photo?');">
+                    <button type="submit" title="Delete photo" aria-label="Delete photo">&times;</button>
+                  </form>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="empty-note">No photos uploaded yet for this safari.</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <h2>Recent enquiries</h2>
+    {% if inquiries %}
+      <table class="inquiry-table">
+        <thead>
+          <tr>
+            <th>Received</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Safari</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in inquiries %}
+            <tr>
+              <td>{{ i.received_at }}</td>
+              <td>{{ i.name }}</td>
+              <td>{{ i.email }}{% if i.phone %}<br>{{ i.phone }}{% endif %}</td>
+              <td>{{ i.safari.name if i.safari else '—' }}</td>
+              <td>{{ i.message }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="empty-note">No enquiries yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Diani Sea Adventures - Sea Safaris on Kenya's South Coast{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <p class="hero-eyebrow">{{ tr('hero_eyebrow') }}</p>
+      <h1>{{ tr('hero_title_html')|safe }}</h1>
+      <p class="hero-sub">{{ tr('hero_subtitle') }}</p>
+      <div class="hero-ctas">
+        <a href="#safaris" class="btn btn-coral">{{ tr('hero_cta_browse') }}</a>
+        <a href="{{ url_for('contact') }}" class="btn btn-outline">{{ tr('hero_cta_ask') }}</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="num">{{ safaris|length }}</span>
+          <span class="label">{{ tr('hero_stat_safaris_label') }}</span>
+        </div>
+        <div class="hero-stat">
+          <span class="num">12+</span>
+          <span class="label">{{ tr('hero_stat_years_label') }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">🐬🐬</div>
+  </div>
+  <svg class="wave-divider" viewBox="0 0 1440 90" preserveAspectRatio="none">
+    <path d="M0,32 C240,80 480,0 720,24 C960,48 1200,88 1440,40 L1440,90 L0,90 Z"></path>
+  </svg>
+</section>
+
+<section class="intro-band" id="why-us">
+  <div class="container intro-grid">
+    <div>
+      <h2>{{ tr('intro_heading') }}</h2>
+      <p>{{ tr('intro_body') }}</p>
+    </div>
+    <div class="feature-list">
+      <div>
+        <h3>{{ tr('intro_feature1_title')|safe }}</h3>
+        <p>{{ tr('intro_feature1_body') }}</p>
+      </div>
+      <div>
+        <h3>{{ tr('intro_feature2_title') }}</h3>
+        <p>{{ tr('intro_feature2_body') }}</p>
+      </div>
+      <div>
+        <h3>{{ tr('intro_feature3_title') }}</h3>
+        <p>{{ tr('intro_feature3_body') }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="safaris-section" id="safaris">
+  <div class="container">
+    <div class="section-heading">
+      <h2>{{ tr('safaris_heading') }}</h2>
+      <p>{{ tr('safaris_subheading') }}</p>
+    </div>
+
+    {% for s in safaris %}
+      <a href="{{ url_for('safari_detail', slug=s.slug) }}" class="safari-row accent-{{ s.accent }}">
+        <div class="safari-row-visual">
+          {% if s.cover_url %}
+            <img src="{{ s.cover_url }}" alt="" width="600" height="450">
+          {% else %}
+            <span class="safari-row-visual-emoji" aria-hidden="true">{{ s.emoji }}</span>
+          {% endif %}
+        </div>
+        <div class="safari-row-body">
+          <span class="kicker">{{ s.tagline }}</span>
+          <h3>{{ s.name }}</h3>
+          <p>{{ s.teaser }}</p>
+          <div class="safari-row-meta">
+            <span>{{ s.duration }}</span>
+            <span>{{ s.price }}</span>
+            <span>{{ s.difficulty }}</span>
+          </div>
+          <span class="link-arrow">{{ tr('safari_row_view_details') }}</span>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="testimonial-band">
+  <div class="container">
+    <div class="section-heading">
+      <h2>{{ tr('testimonials_heading') }}</h2>
+      <p>{{ tr('testimonials_subheading') }}</p>
+    </div>
+    <div class="testimonial-grid">
+      {% for story in testimonials %}
+        <div class="testimonial">
+          <p class="quote">&ldquo;{{ story.quote }}&rdquo;</p>
+          <p class="attribution">{{ story.name }} &middot; {{ story.trip_name }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="faq-band" id="faq">
+  <div class="container">
+    <div class="section-heading">
+      <h2>{{ tr('faq_heading') }}</h2>
+      <p>{{ tr('faq_subheading') }}</p>
+    </div>
+    <div class="faq-list">
+      {% for item in faqs %}
+        <details class="faq-item">
+          <summary>{{ item.q }}<span class="icon" aria-hidden="true"></span></summary>
+          <p>{{ item.a }}</p>
+        </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="container cta-inner">
+    <div>
+      <h2>{{ tr('cta_heading') }}</h2>
+      <p>{{ tr('cta_subheading') }}</p>
+    </div>
+    <a href="{{ url_for('contact') }}" class="btn btn-outline">{{ tr('cta_button') }}</a>
+  </div>
+</section>
+
+{% endblock %}

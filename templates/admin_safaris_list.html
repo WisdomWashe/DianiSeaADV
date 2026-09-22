@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Safaris - Diani Sea Adventures{% endblock %}
+
+{% block content %}
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="container">
+      <span>Signed in as admin</span>
+      <a href="{{ url_for('admin_logout') }}">Log out</a>
+    </div>
+  </div>
+
+  <div class="container admin-subnav">
+    <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin_safaris') }}" class="active">Manage safaris</a>
+  </div>
+
+  <div class="container admin-section">
+    <div class="admin-section-head">
+      <h2>Safaris</h2>
+      <a href="{{ url_for('admin_safari_new') }}" class="btn btn-coral btn-small">+ Add new safari</a>
+    </div>
+
+    <div class="safari-admin-list">
+      {% for s in safaris %}
+        <div class="safari-admin-row">
+          <div class="safari-admin-visual">
+            {% if s.cover_url %}
+              <img src="{{ s.cover_url }}" alt="">
+            {% else %}
+              <span class="safari-admin-emoji" aria-hidden="true">{{ s.emoji }}</span>
+            {% endif %}
+          </div>
+          <div class="safari-admin-info">
+            <h3>{{ s.name }}</h3>
+            <p>{{ s.tagline }}</p>
+            <p class="safari-admin-meta">/{{ s.slug }} &middot; order {{ s.display_order }} &middot; {{ s.images|length }} photo(s)</p>
+          </div>
+          <div class="safari-admin-actions">
+            <a href="{{ url_for('admin_safari_edit', slug=s.slug) }}" class="btn btn-outline-dark btn-small">Edit</a>
+            <form method="POST" action="{{ url_for('admin_safari_delete', slug=s.slug) }}" onsubmit="return confirm('Delete {{ s.name }}? This also removes its gallery photos and cannot be undone.');">
+              <button type="submit" class="btn btn-outline-dark btn-small btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

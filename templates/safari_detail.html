@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}{{ safari.name }} - Diani Sea Adventures{% endblock %}
+{% block meta_description %}{{ safari.teaser }}{% endblock %}
+
+{% block content %}
+
+<div class="accent-{{ safari.accent }}">
+  <div class="container breadcrumb">
+    <a href="{{ url_for('index') }}">{{ tr('detail_breadcrumb_home') }}</a> &nbsp;/&nbsp;
+    <a href="{{ url_for('index') }}#safaris">{{ tr('detail_breadcrumb_safaris') }}</a> &nbsp;/&nbsp;
+    {{ safari.name }}
+  </div>
+
+  <section class="detail-hero {{ 'has-cover' if safari.cover_url else 'no-cover' }}">
+    {% if safari.cover_url %}
+      <div class="detail-hero-cover">
+        <img src="{{ safari.cover_url }}" alt="{{ safari.name }}">
+      </div>
+    {% endif %}
+    <div class="container detail-hero-copy">
+      {% if not safari.cover_url %}
+        <span class="emoji-mark" aria-hidden="true">{{ safari.emoji }}</span>
+      {% endif %}
+      <p class="tag">{{ safari.tagline }}</p>
+      <h1>{{ safari.name }}</h1>
+    </div>
+  </section>
+
+  <div class="facts-strip">
+    <div class="container">
+      <div class="facts-grid">
+        <div class="fact">
+          <div class="fact-label">{{ tr('detail_fact_duration') }}</div>
+          <div class="fact-value">{{ safari.duration }}</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">{{ tr('detail_fact_group_size') }}</div>
+          <div class="fact-value">{{ safari.group_size }}</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">{{ tr('detail_fact_price') }}</div>
+          <div class="fact-value">{{ safari.price }}</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">{{ tr('detail_fact_level') }}</div>
+          <div class="fact-value">{{ safari.difficulty }}</div>
+        </div>
+        <div class="fact">
+          <div class="fact-label">{{ tr('detail_fact_departs') }}</div>
+          <div class="fact-value">{{ safari.departs }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="detail-layout">
+    <div class="detail-main">
+      <h2>{{ tr('detail_overview_heading') }}</h2>
+      {% for para in safari.overview %}
+        <p>{{ para }}</p>
+      {% endfor %}
+
+      <h2>{{ tr('detail_highlights_heading') }}</h2>
+      <ul>
+        {% for h in safari.highlights %}<li>{{ h }}</li>{% endfor %}
+      </ul>
+
+      <h2>{{ tr('detail_included_heading') }}</h2>
+      <div class="two-col-list">
+        <div>
+          <p style="font-weight:600; margin-bottom:8px;">{{ tr('detail_included_label') }}</p>
+          <ul>{% for i in safari.included %}<li>{{ i }}</li>{% endfor %}</ul>
+        </div>
+        <div>
+          <p style="font-weight:600; margin-bottom:8px;">{{ tr('detail_excluded_label') }}</p>
+          <ul>{% for e in safari.excluded %}<li>{{ e }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+
+      <h2>{{ tr('detail_bring_heading') }}</h2>
+      <ul>
+        {% for b in safari.bring %}<li>{{ b }}</li>{% endfor %}
+      </ul>
+
+      <h2>{{ tr('detail_best_time_heading') }}</h2>
+      <p>{{ safari.best_time }}</p>
+    </div>
+
+    <aside class="booking-panel">
+      <div class="price">{{ safari.price }}</div>
+      <a href="{{ url_for('contact', safari=safari.slug) }}" class="btn btn-coral btn-block">{{ tr('detail_enquire_button') }}</a>
+      <p class="contact-line">{{ tr('detail_call_whatsapp') }} <a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></p>
+    </aside>
+  </div>
+</div>
+
+{% if safari.itinerary %}
+<section class="itinerary-section accent-{{ safari.accent }}">
+  <div class="container">
+    <div class="section-heading">
+      <h2>{{ tr('detail_itinerary_heading') }}</h2>
+    </div>
+    <ol class="itinerary-timeline">
+      {% for stop in safari.itinerary %}
+        <li class="itinerary-stop">
+          <div class="itinerary-marker">
+            <span class="itinerary-icon" aria-hidden="true">{{ stop.icon }}</span>
+            {% if not loop.last %}<span class="itinerary-line"></span>{% endif %}
+          </div>
+          <div class="itinerary-content">
+            <h4>{{ stop.title }}</h4>
+            {% if stop.description %}<p>{{ stop.description }}</p>{% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+<section class="gallery-section">
+  <div class="container">
+    <div class="section-heading">
+      <h2>{{ tr('detail_gallery_heading') }}</h2>
+      <p>{{ tr('detail_gallery_caption', name=safari.name) }}</p>
+    </div>
+
+    {% if gallery %}
+      <div class="gallery-grid">
+        {% for img in gallery %}
+          <a href="{{ url_for('static', filename='uploads/' ~ safari.slug ~ '/' ~ img.filename) }}" target="_blank" rel="noopener">
+            <img src="{{ url_for('static', filename='uploads/' ~ safari.slug ~ '/' ~ img.filename) }}" alt="Photo from a {{ safari.name }}" loading="lazy">
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="gallery-empty">
+        <p style="margin:0;">{{ tr('detail_gallery_empty', name=safari.name) }}</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% if others %}
+<section class="related-band">
+  <div class="container">
+    <div class="section-heading">
+      <h2>{{ tr('detail_related_heading') }}</h2>
+    </div>
+    <div class="related-grid">
+      {% for o in others %}
+        <a href="{{ url_for('safari_detail', slug=o.slug) }}" class="related-card {{ '' if o.cover_url else 'no-cover' }}">
+          {% if o.cover_url %}
+            <img class="related-cover" src="{{ o.cover_url }}" alt="">
+          {% else %}
+            <span class="related-cover-emoji" aria-hidden="true">{{ o.emoji }}</span>
+          {% endif %}
+          <h4>{{ o.name }}</h4>
+          <p>{{ o.duration }} &middot; {{ o.price }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

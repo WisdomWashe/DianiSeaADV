@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found - Diani Sea Adventures{% endblock %}
+
+{% block content %}
+<div class="container not-found">
+  <h1>{{ tr('notfound_heading') }}</h1>
+  <p>{{ tr('notfound_message') }}</p>
+  <a href="{{ url_for('index') }}" class="btn btn-coral">{{ tr('notfound_button') }}</a>
+</div>
+{% endblock %}

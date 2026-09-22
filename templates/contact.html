@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Contact - Diani Sea Adventures{% endblock %}
+{% block meta_description %}{{ tr('contact_meta_description') }}{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <h1>{{ tr('contact_page_title') }}</h1>
+    <p>{{ tr('contact_page_subtitle') }}</p>
+  </div>
+</section>
+
+<div class="container contact-layout">
+  <form method="POST" action="{{ url_for('contact') }}" novalidate>
+    <div class="form-row">
+      <div class="form-field">
+        <label for="name">{{ tr('contact_label_name') }}</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-field">
+        <label for="email">{{ tr('contact_label_email') }}</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="phone">{{ tr('contact_label_phone') }}</label>
+        <input type="tel" id="phone" name="phone">
+      </div>
+      <div class="form-field">
+        <label for="safari">{{ tr('contact_label_safari') }}</label>
+        <select id="safari" name="safari">
+          <option value="">{{ tr('contact_option_not_sure') }}</option>
+          {% for s in safaris %}
+            <option value="{{ s.slug }}" {% if preselect == s.slug %}selected{% endif %}>{{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="message">{{ tr('contact_label_message') }}</label>
+      <textarea id="message" name="message" placeholder="{{ tr('contact_message_placeholder') }}" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-coral">{{ tr('contact_button_send') }}</button>
+  </form>
+
+  <aside class="contact-card">
+    <h3>{{ tr('contact_card_heading') }}</h3>
+    <dl>
+      <dt>{{ tr('contact_dt_phone') }}</dt>
+      <dd><a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></dd>
+      <dt>{{ tr('contact_dt_email') }}</dt>
+      <dd><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></dd>
+      <dt>{{ tr('contact_dt_location') }}</dt>
+      <dd>{{ contact.address }}</dd>
+      <dt>{{ tr('contact_dt_hours') }}</dt>
+      {% for day, hours in contact.hours %}
+        <dd>{{ day }}: {{ hours }}</dd>
+      {% endfor %}
+    </dl>
+    <iframe
+      class="map-frame"
+      loading="lazy"
+      title="Map of Diani Beach"
+      src="https://www.openstreetmap.org/export/embed.html?bbox=39.55%2C-4.35%2C39.62%2C-4.28&layer=mapnik&marker=-4.315%2C39.585">
+    </iframe>
+  </aside>
+</div>
+
+{% endblock %}

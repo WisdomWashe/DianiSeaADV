@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Diani Sea Adventures{% endblock %}
+
+{% block content %}
+<div class="login-shell">
+  <div class="login-card">
+    <h1>Admin login</h1>
+    <p>Manage safari galleries and view enquiries.</p>
+    <form method="POST" action="{{ url_for('admin_login') }}">
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autofocus>
+      </div>
+      <button type="submit" class="btn btn-coral btn-block">Log in</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Add safari' if is_new else 'Edit safari' }} - Diani Sea Adventures{% endblock %}
+
+{% block content %}
+<div class="admin-shell">
+  <div class="admin-topbar">
+    <div class="container">
+      <span>Signed in as admin</span>
+      <a href="{{ url_for('admin_logout') }}">Log out</a>
+    </div>
+  </div>
+
+  <div class="container admin-subnav">
+    <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('admin_safaris') }}" class="active">Manage safaris</a>
+  </div>
+
+  <div class="container admin-section">
+    <h2>{{ 'Add a new safari' if is_new else 'Edit safari' }}</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="safari-form">
+
+      <fieldset class="admin-fieldset">
+        <legend>Basic details</legend>
+
+        <div class="form-row">
+          {% if is_new %}
+            <div class="form-field">
+              <label for="slug">URL slug (optional)</label>
+              <input type="text" id="slug" name="slug" value="{{ form.slug }}" placeholder="auto-generated from the English name if left blank">
+            </div>
+          {% else %}
+            <div class="form-field">
+              <label>URL slug</label>
+              <input type="text" value="{{ slug }}" disabled>
+              <p class="field-hint">Fixed once created - changing it would break existing photo links.</p>
+            </div>
+          {% endif %}
+
+          <div class="form-field">
+            <label for="emoji">Emoji (fallback icon when there's no cover photo)</label>
+            <input type="text" id="emoji" name="emoji" value="{{ form.emoji }}" maxlength="8">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="accent">Accent color</label>
+            <select id="accent" name="accent">
+              {% for choice in accent_choices %}
+                <option value="{{ choice }}" {% if form.accent == choice %}selected{% endif %}>{{ choice|capitalize }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="display_order">Display order (lower numbers show first)</label>
+            <input type="number" id="display_order" name="display_order" value="{{ form.display_order }}">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="cover_photo">Cover photo (.jpg - shown on the homepage, safari page, and related-safaris cards)</label>
+          {% if cover_url %}
+            <img src="{{ cover_url }}" alt="" class="cover-preview">
+          {% endif %}
+          <input type="file" id="cover_photo" name="cover_photo" accept="image/jpeg">
+          <p class="field-hint">Leave blank to keep the current cover photo. If there's no cover photo at all, the emoji above is shown instead.</p>
+        </div>
+      </fieldset>
+
+      {% for loc, label in [('en', 'English'), ('de', 'Deutsch'), ('fr', 'Français')] %}
+        <fieldset class="admin-fieldset">
+          <legend>Content &mdash; {{ label }}{% if loc == 'en' %} (required){% endif %}</legend>
+
+          <div class="form-field">
+            <label for="name_{{ loc }}">Name</label>
+            <input type="text" id="name_{{ loc }}" name="name_{{ loc }}" value="{{ form['name_' ~ loc] }}">
+          </div>
+          <div class="form-field">
+            <label for="tagline_{{ loc }}">Tagline</label>
+            <input type="text" id="tagline_{{ loc }}" name="tagline_{{ loc }}" value="{{ form['tagline_' ~ loc] }}">
+          </div>
+          <div class="form-field">
+            <label for="teaser_{{ loc }}">Teaser (shown on the homepage card)</label>
+            <textarea id="teaser_{{ loc }}" name="teaser_{{ loc }}" rows="2">{{ form['teaser_' ~ loc] }}</textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="duration_{{ loc }}">Duration</label>
+              <input type="text" id="duration_{{ loc }}" name="duration_{{ loc }}" value="{{ form['duration_' ~ loc] }}">
+            </div>
+            <div class="form-field">
+              <label for="group_size_{{ loc }}">Group size</label>
+              <input type="text" id="group_size_{{ loc }}" name="group_size_{{ loc }}" value="{{ form['group_size_' ~ loc] }}">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="price_{{ loc }}">Price</label>
+              <input type="text" id="price_{{ loc }}" name="price_{{ loc }}" value="{{ form['price_' ~ loc] }}">
+            </div>
+            <div class="form-field">
+              <label for="difficulty_{{ loc }}">Difficulty / level</label>
+              <input type="text" id="difficulty_{{ loc }}" name="difficulty_{{ loc }}" value="{{ form['difficulty_' ~ loc] }}">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="departs_{{ loc }}">Departs</label>
+              <input type="text" id="departs_{{ loc }}" name="departs_{{ loc }}" value="{{ form['departs_' ~ loc] }}">
+            </div>
+            <div class="form-field">
+              <label for="best_time_{{ loc }}">Best time to go</label>
+              <input type="text" id="best_time_{{ loc }}" name="best_time_{{ loc }}" value="{{ form['best_time_' ~ loc] }}">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="overview_{{ loc }}">Overview (one paragraph per line)</label>
+            <textarea id="overview_{{ loc }}" name="overview_{{ loc }}" rows="4">{{ form['overview_' ~ loc] }}</textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="highlights_{{ loc }}">Highlights (one per line)</label>
+            <textarea id="highlights_{{ loc }}" name="highlights_{{ loc }}" rows="4">{{ form['highlights_' ~ loc] }}</textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="included_{{ loc }}">Included (one per line)</label>
+              <textarea id="included_{{ loc }}" name="included_{{ loc }}" rows="4">{{ form['included_' ~ loc] }}</textarea>
+            </div>
+            <div class="form-field">
+              <label for="excluded_{{ loc }}">Not included (one per line)</label>
+              <textarea id="excluded_{{ loc }}" name="excluded_{{ loc }}" rows="4">{{ form['excluded_' ~ loc] }}</textarea>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="bring_{{ loc }}">What to bring (one per line)</label>
+            <textarea id="bring_{{ loc }}" name="bring_{{ loc }}" rows="3">{{ form['bring_' ~ loc] }}</textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="itinerary_{{ loc }}">Itinerary stops (one per line, formatted as: icon | title | short description)</label>
+            <textarea id="itinerary_{{ loc }}" name="itinerary_{{ loc }}" rows="6" placeholder="🏨 | Hotel pick-up | We collect you from your accommodation.">{{ form['itinerary_' ~ loc] }}</textarea>
+            {% if loc == 'en' %}
+              <p class="field-hint">The English icon is used for all three languages - you don't need to repeat it in the German/French lines, but keep the same number of lines and order in all three so they line up correctly.</p>
+            {% endif %}
+          </div>
+        </fieldset>
+      {% endfor %}
+
+      <button type="submit" class="btn btn-coral">{{ 'Add safari' if is_new else 'Save changes' }}</button>
+      <a href="{{ url_for('admin_safaris') }}" class="btn btn-outline-dark">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
