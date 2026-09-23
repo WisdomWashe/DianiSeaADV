@@ -1,19 +1,25 @@
-app = "dianiseaadv"
-primary_region = "ams"
+# fly.toml app configuration file generated for dianiseaadv on 2026-09-22T21:51:10+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'dianiseaadv'
+primary_region = 'jnb'
+
+[build]
 
 [http_service]
-auto_start_machines = true
-auto_stop_machines = true
-force_https = true
-internal_port = 8080
-min_machines_running = 0
-processes = [ "app" ]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
 
 [processes]
-app = "gunicorn -w 2 -b 0.0.0.0:8080 app:app"
+  app = "gunicorn -w 2 -b 0.0.0.0:8080 app:app"
 
 [[vm]]
-cpu_kind = "shared"
-cpus = 1
-memory = "1gb"
-memory_mb = 1024
+  memory = '1gb'
+  cpus = 1
+  memory_mb = 1024
